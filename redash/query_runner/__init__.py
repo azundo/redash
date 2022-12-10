@@ -107,8 +107,9 @@ def find_last_keyword_idx(parsed_query):
 
 def is_possible_cte_token(token):
     return (
+        token.is_whitespace or
         token.ttype in (
-            None, sqlparse.tokens.Whitespace, sqlparse.tokens.CTE, sqlparse.tokens.Comment
+            None, sqlparse.tokens.CTE, sqlparse.tokens.Comment
         ) or
         (token.value.upper() == "AS")
     )
