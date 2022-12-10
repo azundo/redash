@@ -107,6 +107,12 @@ def find_last_keyword_idx(parsed_query):
             return i
     return -1
 
+def is_possible_cte_token(token):
+    return (
+        token.ttype in (None, sqlparse.tokens.Whitespace, sqlparse.tokens.CTE) or
+        (token.value.upper() == "AS")
+    )
+
 class InterruptException(Exception):
     pass
 
@@ -284,10 +290,18 @@ class BaseSQLQueryRunner(BaseQueryRunner):
         return True
 
     def query_is_select_no_limit(self, query):
-        parsed_query = sqlparse.parse(query)[0]
+        parsed_query = sqlparse.parse(query.strip())[0]
         last_keyword_idx = find_last_keyword_idx(parsed_query)
         # Either invalid query or query that is not select
-        if last_keyword_idx == -1 or parsed_query.tokens[0].value.upper() != "SELECT":
+        first_token_index = 0
+        if parsed_query.tokens[0].ttype == sqlparse.tokens.CTE:
+            while (
+                is_possible_cte_token(parsed_query.tokens[first_token_index]) and
+                first_token_index < len(parsed_query.tokens) - 1
+            ):
+                first_token_index += 1
+
+        if last_keyword_idx == -1 or parsed_query.tokens[first_token_index].value.upper() != "SELECT":
             return False
 
         no_limit = parsed_query.tokens[last_keyword_idx].value.upper() not in self.limit_keywords
