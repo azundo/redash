@@ -120,4 +120,11 @@ BSD-2-Clause.
 ## Numida
 
 Use the .ci/docker_build_numida script to build and tag an image for numidatech/redash:numida
+
 You will have to manage docker login and push manually
+
+Typically the master branch in this repo is kept up to date with the upstream repository
+at getredash/redash
+
+The default branch is numida which should reflect the currently running code on our
+instance. It should be rebased on upstream master when appropriate.
