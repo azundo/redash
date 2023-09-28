@@ -24,8 +24,8 @@ Redash features:
 
 ## Getting Started
 
-* [Setting up Redash instance](https://redash.io/help/open-source/setup) (includes links to ready-made AWS/GCE images).
-* [Documentation](https://redash.io/help/).
+- [Setting up Redash instance](https://redash.io/help/open-source/setup) (includes links to ready-made AWS/GCE images).
+- [Documentation](https://redash.io/help/).
 
 ## Supported Data Sources
 
@@ -100,14 +100,14 @@ Redash supports more than 35 SQL and NoSQL [data sources](https://redash.io/help
 
 ## Getting Help
 
-* Issues: https://github.com/getredash/redash/issues
-* Discussion Forum: https://github.com/getredash/redash/discussions/
-* Development Discussion: https://discord.gg/tN5MdmfGBp
+- Issues: https://github.com/getredash/redash/issues
+- Discussion Forum: https://github.com/getredash/redash/discussions/
+- Development Discussion: https://discord.gg/tN5MdmfGBp
 
 ## Reporting Bugs and Contributing Code
 
-* Want to report a bug or request a feature? Please open [an issue](https://github.com/getredash/redash/issues/new).
-* Want to help us build **_Redash_**? Fork the project, edit in a [dev environment](https://github.com/getredash/redash/wiki/Local-development-setup) and make a pull request. We need all the help we can get!
+- Want to report a bug or request a feature? Please open [an issue](https://github.com/getredash/redash/issues/new).
+- Want to help us build **_Redash_**? Fork the project, edit in a [dev environment](https://github.com/getredash/redash/wiki/Local-development-setup) and make a pull request. We need all the help we can get!
 
 ## Security
 
@@ -116,3 +116,8 @@ Please email security@redash.io to report any security vulnerabilities. We will 
 ## License
 
 BSD-2-Clause.
+
+## Numida
+
+Use the .ci/docker_build_numida script to build and tag an image for numidatech/redash:numida
+You will have to manage docker login and push manually
