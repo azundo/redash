@@ -32,6 +32,35 @@ class TestBaseSQLQueryRunner(unittest.TestCase):
         query = "SELECT * LIMIT 5 OFFSET 3"
         self.assertEqual(False, self.query_runner.query_is_select_no_limit(query))
 
+    def test_check_query_with_leading_comment(self):
+        query = "-- comment\nSELECT *"
+        self.assertEqual(True, self.query_runner.query_is_select_no_limit(query))
+
+    def test_check_query_with_leading_block_comment(self):
+        query = "/* comment\n*/\nSELECT *"
+        self.assertEqual(True, self.query_runner.query_is_select_no_limit(query))
+
+    def test_check_query_with_CTE(self):
+        query = """
+        with cte as (SELECT *)
+        SELECT *
+        """
+        self.assertEqual(True, self.query_runner.query_is_select_no_limit(query))
+
+    def test_check_query_with_internal_CTE_limit(self):
+        query = """
+        with cte as (SELECT * LIMIT 10)
+        SELECT *
+        """
+        self.assertEqual(True, self.query_runner.query_is_select_no_limit(query))
+
+    def test_check_query_with_CTE_and_limit(self):
+        query = """
+        with cte as (SELECT *)
+        SELECT * LIMIT 10
+        """
+        self.assertEqual(False, self.query_runner.query_is_select_no_limit(query))
+
     def test_add_limit_query_no_limit(self):
         query = "SELECT *"
         self.assertEqual("SELECT * LIMIT 1000", self.query_runner.add_limit_to_query(query))

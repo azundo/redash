@@ -105,6 +105,13 @@ def find_last_keyword_idx(parsed_query):
             return i
     return -1
 
+def remove_leading_comments(parsed_query):
+    # remove leading omments
+    while parsed_query.tokens and parsed_query.tokens[0].ttype is None:
+        parsed_query.tokens.pop(0)
+    return parsed_query
+
+
 def is_possible_cte_token(token):
     return (
         token.is_whitespace or
@@ -113,6 +120,16 @@ def is_possible_cte_token(token):
         ) or
         (token.value.upper() == "AS")
     )
+
+def remove_cte_tokens(parsed_query):
+    # remove CTE expressions
+    if parsed_query.tokens and parsed_query.tokens[0].ttype == sqlparse.tokens.CTE:
+        while (
+            parsed_query.tokens and is_possible_cte_token(parsed_query.tokens[0])
+        ):
+            parsed_query.tokens.pop(0)
+    return parsed_query
+
 
 class InterruptException(Exception):
     pass
@@ -297,17 +314,15 @@ class BaseSQLQueryRunner(BaseQueryRunner):
 
     def query_is_select_no_limit(self, query):
         parsed_query = sqlparse.parse(query.strip())[0]
-        last_keyword_idx = find_last_keyword_idx(parsed_query)
-        # Either invalid query or query that is not select
-        first_token_index = 0
-        if parsed_query.tokens[0].ttype == sqlparse.tokens.CTE:
-            while (
-                is_possible_cte_token(parsed_query.tokens[first_token_index]) and
-                first_token_index < len(parsed_query.tokens) - 1
-            ):
-                first_token_index += 1
 
-        if last_keyword_idx == -1 or parsed_query.tokens[first_token_index].value.upper() != "SELECT":
+        remove_leading_comments(parsed_query)
+
+        remove_cte_tokens(parsed_query)
+
+        last_keyword_idx = find_last_keyword_idx(parsed_query)
+
+        # Either invalid query or query that is not select
+        if last_keyword_idx == -1 or parsed_query.tokens[0].value.upper() != "SELECT":
             return False
 
         no_limit = parsed_query.tokens[last_keyword_idx].value.upper() not in self.limit_keywords
